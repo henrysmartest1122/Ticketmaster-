@@ -1,4 +1,7 @@
-<!-- force update --><!DOCTYPE html>
+<!-- force update -'All Events') renderEvents();
+        else renderEvents(events.filter(e => e.category === cat));
+      });
+    });<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -32,22 +35,8 @@
         <a href="#" class="text-2xl font-black tracking-tight text-white">
           Ticket<span class="text-primary">master</span>
         </a>
-        <div class="hidden md:flex gap-6 text-sm font-medium">
-          <a href="#" class="hover:text-primary transition">Concerts</a>
-          <a href="#" class="hover:text-primary transition">Sports</a>
-          <a href="#" class="hover:text-primary transition">Arts & Theater</a>
-          <a href="#" class="hover:text-primary transition">Comedy</a>
-        </div>
       </div>
-
       <div class="flex items-center gap-4">
-        <div class="relative hidden sm:block">
-          <input id="searchInput" type="text" placeholder="Search by Artist, Event or Venue"
-                 class="bg-card border border-gray-700 rounded-full pl-10 pr-4 py-2 w-72 text-sm focus:outline-none focus:border-primary">
-          <svg class="w-4 h-4 absolute left-3 top-2.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-        </div>
         <button class="bg-primary hover:bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-semibold transition">
           Sign In / Register
         </button>
@@ -57,22 +46,20 @@
 
   <!-- Hero -->
   <section class="relative h-[420px] overflow-hidden">
-    <img src="https://picsum.photos/id/1015/1600/900" 
-         class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Concert">
+    <img src="https://picsum.photos/id/1015/1600/900" class="absolute inset-0 w-full h-full object-cover opacity-60" alt="Concert">
     <div class="absolute inset-0 bg-gradient-to-t from-dark via-dark/70 to-transparent"></div>
     <div class="relative max-w-7xl mx-auto px-4 h-full flex flex-col justify-end pb-12">
       <p class="text-primary font-semibold mb-2">Featured Event</p>
-      <h1 class="text-4xl md:text-6xl font-black mb-3">Taylor Swift | The Eras Tour</h1>
+      <h1 class="text-4xl md:text-5xl font-black mb-3">Taylor Swift | The Eras Tour</h1>
       <p class="text-gray-300 text-lg mb-6">MetLife Stadium • East Rutherford, NJ • Oct 18, 2026</p>
-      <button onclick="openModal('Taylor Swift | The Eras Tour')" 
-              class="bg-primary hover:bg-blue-600 w-fit px-8 py-3 rounded-full font-bold text-lg transition">
+      <button onclick="openModal('Taylor Swift | The Eras Tour')" class="bg-primary hover:bg-blue-600 w-fit px-8 py-3 rounded-full font-bold text-lg transition">
         Find Tickets
       </button>
     </div>
   </section>
 
   <!-- Categories -->
-  <section class="max-w-7xl mx-auto px-4 py-10">
+  <section class="max-w-7xl mx-auto px-4 py-8">
     <div class="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
       <button class="category-btn active bg-primary text-white px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap">All Events</button>
       <button class="category-btn bg-card hover:bg-gray-800 px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap">Concerts</button>
@@ -87,55 +74,13 @@
   <section class="max-w-7xl mx-auto px-4 pb-20">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-2xl font-bold">Upcoming Events Near You</h2>
-      <select class="bg-card border border-gray-700 rounded-lg px-3 py-2 text-sm">
-        <option>Sort by Date</option>
-        <option>Price: Low to High</option>
-        <option>Price: High to Low</option>
-        <option>Most Popular</option>
-      </select>
     </div>
-
-    <div id="eventGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      <!-- Cards injected by JS -->
-    </div>
+    <div id="eventGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </section>
 
   <!-- Footer -->
-  <footer class="border-t border-gray-800 py-12">
-    <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm text-gray-400">
-      <div>
-        <h4 class="text-white font-semibold mb-3">About Us</h4>
-        <ul class="space-y-2">
-          <li><a href="#" class="hover:text-primary">Who We Are</a></li>
-          <li><a href="#" class="hover:text-primary">Careers</a></li>
-          <li><a href="#" class="hover:text-primary">Press</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="text-white font-semibold mb-3">Help</h4>
-        <ul class="space-y-2">
-          <li><a href="#" class="hover:text-primary">Customer Support</a></li>
-          <li><a href="#" class="hover:text-primary">Ticket Guarantee</a></li>
-          <li><a href="#" class="hover:text-primary">Refunds</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="text-white font-semibold mb-3">Sell</h4>
-        <ul class="space-y-2">
-          <li><a href="#" class="hover:text-primary">Sell Tickets</a></li>
-          <li><a href="#" class="hover:text-primary">Fan-to-Fan Resale</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="text-white font-semibold mb-3">Follow Us</h4>
-        <div class="flex gap-3">
-          <a href="#" class="hover:text-primary">Twitter</a>
-          <a href="#" class="hover:text-primary">Instagram</a>
-          <a href="#" class="hover:text-primary">Facebook</a>
-        </div>
-      </div>
-    </div>
-    <p class="text-center text-gray-600 text-xs mt-10">© 2026 Ticketmaster. Educational demo only.</p>
+  <footer class="border-t border-gray-800 py-10">
+    <p class="text-center text-gray-600 text-sm">© 2026 Ticketmaster. Educational demo only.</p>
   </footer>
 
   <!-- Modal -->
@@ -144,39 +89,35 @@
       <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl">&times;</button>
       <h3 id="modalTitle" class="text-xl font-bold mb-2"></h3>
       <p class="text-gray-400 text-sm mb-6">Select quantity and continue to checkout</p>
-      
       <div class="space-y-4 mb-6">
         <div class="flex justify-between items-center">
           <span>Standard Admission</span>
           <span class="font-semibold">$89.50</span>
         </div>
         <div class="flex items-center gap-4">
-          <button onclick="changeQty(-1)" class="w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600">−</button>
+          <button onclick="changeQty(-1)" class="w-8 h-8 rounded-full bg-gray-700">−</button>
           <span id="qty" class="text-lg font-bold w-8 text-center">1</span>
-          <button onclick="changeQty(1)" class="w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600">+</button>
+          <button onclick="changeQty(1)" class="w-8 h-8 rounded-full bg-gray-700">+</button>
         </div>
         <div class="border-t border-gray-700 pt-4 flex justify-between font-bold text-lg">
           <span>Total</span>
           <span id="total">$89.50</span>
         </div>
       </div>
-
-      <button class="w-full bg-primary hover:bg-blue-600 py-3 rounded-full font-bold transition">
-        Continue to Checkout
-      </button>
+      <button class="w-full bg-primary hover:bg-blue-600 py-3 rounded-full font-bold">Continue to Checkout</button>
     </div>
   </div>
 
   <script>
     const events = [
-      { id: 1, title: "Billie Eilish World Tour", venue: "Madison Square Garden", date: "Nov 12, 2026", price: 145, category: "Concerts", img: "https://picsum.photos/id/1011/600/400" },
-      { id: 2, title: "NBA Finals Game 3", venue: "Crypto.com Arena", date: "Jun 8, 2026", price: 320, category: "Sports", img: "https://picsum.photos/id/1016/600/400" },
-      { id: 3, title: "Kevin Hart: Reality Check", venue: "Barclays Center", date: "Oct 25, 2026", price: 95, category: "Comedy", img: "https://picsum.photos/id/1018/600/400" },
-      { id: 4, title: "Hamilton", venue: "Richard Rodgers Theatre", date: "Every Tue-Sun", price: 189, category: "Theater", img: "https://picsum.photos/id/1025/600/400" },
-      { id: 5, title: "Coldplay Music of the Spheres", venue: "SoFi Stadium", date: "Sep 14, 2026", price: 175, category: "Concerts", img: "https://picsum.photos/id/1036/600/400" },
-      { id: 6, title: "UFC 312", venue: "T-Mobile Arena", date: "Dec 5, 2026", price: 210, category: "Sports", img: "https://picsum.photos/id/1040/600/400" },
-      { id: 7, title: "Dave Chappelle", venue: "The Theater at MSG", date: "Nov 3, 2026", price: 130, category: "Comedy", img: "https://picsum.photos/id/1050/600/400" },
-      { id: 8, title: "Coachella Valley Music Festival", venue: "Empire Polo Club", date: "Apr 10-19, 2027", price: 549, category: "Festivals", img: "https://picsum.photos/id/1060/600/400" },
+      { title: "Billie Eilish World Tour", venue: "Madison Square Garden", date: "Nov 12, 2026", price: 145, category: "Concerts", img: "https://picsum.photos/id/1011/600/400" },
+      { title: "NBA Finals Game 3", venue: "Crypto.com Arena", date: "Jun 8, 2026", price: 320, category: "Sports", img: "https://picsum.photos/id/1016/600/400" },
+      { title: "Kevin Hart: Reality Check", venue: "Barclays Center", date: "Oct 25, 2026", price: 95, category: "Comedy", img: "https://picsum.photos/id/1018/600/400" },
+      { title: "Hamilton", venue: "Richard Rodgers Theatre", date: "Every Tue-Sun", price: 189, category: "Theater", img: "https://picsum.photos/id/1025/600/400" },
+      { title: "Coldplay Music of the Spheres", venue: "SoFi Stadium", date: "Sep 14, 2026", price: 175, category: "Concerts", img: "https://picsum.photos/id/1036/600/400" },
+      { title: "UFC 312", venue: "T-Mobile Arena", date: "Dec 5, 2026", price: 210, category: "Sports", img: "https://picsum.photos/id/1040/600/400" },
+      { title: "Dave Chappelle", venue: "The Theater at MSG", date: "Nov 3, 2026", price: 130, category: "Comedy", img: "https://picsum.photos/id/1050/600/400" },
+      { title: "Coachella Valley Music Festival", venue: "Empire Polo Club", date: "Apr 10-19, 2027", price: 549, category: "Festivals", img: "https://picsum.photos/id/1060/600/400" }
     ];
 
     let currentQty = 1;
@@ -185,18 +126,18 @@
     function renderEvents(list = events) {
       const grid = document.getElementById('eventGrid');
       grid.innerHTML = list.map(e => `
-        <div class="bg-card rounded-xl overflow-hidden hover:scale-[1.02] transition cursor-pointer group" onclick="openModal('${e.title}')">
-          <div class="relative h-48 overflow-hidden">
-            <img src="\( {e.img}" alt=" \){e.title}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+        <div class="bg-card rounded-xl overflow-hidden cursor-pointer" onclick="openModal('${e.title}')">
+          <div class="relative h-48">
+            <img src="\( {e.img}" alt=" \){e.title}" class="w-full h-full object-cover">
             <span class="absolute top-3 left-3 bg-primary text-xs font-bold px-2 py-1 rounded">${e.category}</span>
           </div>
           <div class="p-4">
-            <h3 class="font-bold text-lg leading-tight mb-1">${e.title}</h3>
-            <p class="text-gray-400 text-sm mb-1">${e.venue}</p>
+            <h3 class="font-bold text-lg mb-1">${e.title}</h3>
+            <p class="text-gray-400 text-sm">${e.venue}</p>
             <p class="text-gray-500 text-sm mb-3">${e.date}</p>
             <div class="flex justify-between items-center">
-              <span class="text-primary font-bold">From \[ {e.price}</span>
-              <button class="text-sm bg-gray-800 hover:bg-primary px-3 py-1.5 rounded-full transition">Tickets</button>
+              <span class="text-primary font-bold">From $${e.price}</span>
+              <button class="text-sm bg-gray-800 hover:bg-primary px-3 py-1.5 rounded-full">Tickets</button>
             </div>
           </div>
         </div>
@@ -223,18 +164,8 @@
     }
 
     function updateTotal() {
-      document.getElementById('total').textContent = ` \]{(basePrice * currentQty).toFixed(2)}`;
+      document.getElementById('total').textContent = '$' + (basePrice * currentQty).toFixed(2);
     }
-
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      const q = e.target.value.toLowerCase();
-      const filtered = events.filter(ev => 
-        ev.title.toLowerCase().includes(q) || 
-        ev.venue.toLowerCase().includes(q) ||
-        ev.category.toLowerCase().includes(q)
-      );
-      renderEvents(filtered);
-    });
 
     document.querySelectorAll('.category-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -244,12 +175,20 @@
         });
         btn.classList.add('bg-primary', 'text-white');
         btn.classList.remove('bg-card');
-
         const cat = btn.textContent.trim();
         if (cat === 'All Events') renderEvents();
         else renderEvents(events.filter(e => e.category === cat));
       });
     });
+
+    document.getElementById('ticketModal').addEventListener('click', e => {
+      if (e.target.id === 'ticketModal') closeModal();
+    });
+
+    renderEvents();
+  </script>
+</body>
+</html>
 
     document.getElementById('ticketModal').addEventListener('click', (e) => {
       if (e.target.id === 'ticketModal') closeModal();
