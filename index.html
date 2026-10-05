@@ -207,24 +207,45 @@
     }
 
     // ========== BUY TICKET PROTECTION ==========
-    function tryBuyTicket(title) {
-      if (!currentUser) {
-        alert("Please Sign In first to buy tickets");
-        showLogin();
-        return;
-      }
-      openModal(title);
-    }
+    async function checkout() {
+  if (!currentUser) {
+    alert("Please Sign In first");
+    closeModal();
+    showLogin();
+    return;
+  }
 
-    function checkout() {
-      if (!currentUser) {
-        alert("Please Sign In first");
-        closeModal();
-        showLogin();
-        return;
-      }
-      alert("Checkout successful! (This is a demo - no real payment yet)");
+  const messageEl = document.getElementById("checkoutMessage");
+  if (messageEl) {
+    messageEl.textContent = "Processing...";
+    messageEl.className = "text-sm text-center text-gray-400";
+  }
+
+  const total = (89.50 * qty).toFixed(2);
+
+  const { data, error } = await supabaseClient.from("orders").insert({
+    user_id: currentUser.id,
+    event_title: currentEventTitle,
+    quantity: qty,
+    total_price: parseFloat(total)
+  }).select();
+
+  if (error) {
+    if (messageEl) {
+      messageEl.textContent = "Error: " + error.message;
+      messageEl.className = "text-sm text-center text-red-400";
+    } else {
+      alert("Error: " + error.message);
+    }
+  } else {
+    if (messageEl) {
+      messageEl.textContent = "Order successful! Tickets booked.";
+      messageEl.className = "text-sm text-center text-green-400";
+    }
+    setTimeout(() => {
       closeModal();
+    }, 1500);
+  }
     }
 
     // ========== EVENTS ==========
