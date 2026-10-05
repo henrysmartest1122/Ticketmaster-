@@ -125,3 +125,178 @@
       const { data: { user } } = await supabaseClient.auth.getUser();
       currentUser = user;
       if (user) {
+        document.getElementById("authButtons").classList.add("hidden");
+        document.getElementById("userInfo").classList.remove("hidden");
+        document.getElementById("userInfo").classList.add("flex");
+        document.getElementById("userEmail").textContent = user.email;
+      } else {
+        document.getElementById("authButtons").classList.remove("hidden");
+        document.getElementById("userInfo").classList.add("hidden");
+      }
+    }
+
+    function showLogin() {
+      isLoginMode = true;
+      document.getElementById("authTitle").textContent = "Sign In";
+      document.getElementById("authActionBtn").textContent = "Sign In";
+      document.getElementById("authMessage").textContent = "";
+      document.getElementById("authModal").classList.remove("hidden");
+      document.getElementById("authModal").classList.add("flex");
+    }
+
+    function showSignup() {
+      isLoginMode = false;
+      document.getElementById("authTitle").textContent = "Create Account";
+      document.getElementById("authActionBtn").textContent = "Sign Up";
+      document.getElementById("authMessage").textContent = "";
+      document.getElementById("authModal").classList.remove("hidden");
+      document.getElementById("authModal").classList.add("flex");
+    }
+
+    function closeAuthModal() {
+      document.getElementById("authModal").classList.add("hidden");
+      document.getElementById("authModal").classList.remove("flex");
+    }
+
+    async function handleAuth() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const messageEl = document.getElementById("authMessage");
+
+      if (!email || !password) {
+        messageEl.textContent = "Please fill in all fields";
+        messageEl.className = "text-sm text-center text-red-400";
+        return;
+      }
+
+      messageEl.textContent = "Please wait...";
+      messageEl.className = "text-sm text-center text-gray-400";
+
+      if (isLoginMode) {
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) {
+          messageEl.textContent = error.message;
+          messageEl.className = "text-sm text-center text-red-400";
+        } else {
+          messageEl.textContent = "Login successful!";
+          messageEl.className = "text-sm text-center text-green-400";
+          setTimeout(() => {
+            closeAuthModal();
+            checkUser();
+          }, 800);
+        }
+      } else {
+        const { error } = await supabaseClient.auth.signUp({ email, password });
+        if (error) {
+          messageEl.textContent = error.message;
+          messageEl.className = "text-sm text-center text-red-400";
+        } else {
+          messageEl.textContent = "Account created! You can now Sign In.";
+          messageEl.className = "text-sm text-center text-green-400";
+        }
+      }
+    }
+
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      currentUser = null;
+      checkUser();
+    }
+
+    function tryBuyTicket(title) {
+      if (!currentUser) {
+        alert("Please Sign In first to buy tickets");
+        showLogin();
+        return;
+      }
+      currentEventTitle = title;
+      openModal(title);
+    }
+
+    async function checkout() {
+      if (!currentUser) {
+        alert("Please Sign In first");
+        closeModal();
+        showLogin();
+        return;
+      }
+
+      const messageEl = document.getElementById("checkoutMessage");
+      messageEl.textContent = "Processing...";
+      messageEl.className = "text-sm text-center text-gray-400";
+
+      const total = (89.50 * qty).toFixed(2);
+
+      const { data, error } = await supabaseClient.from("orders").insert({
+        user_id: currentUser.id,
+        event_title: currentEventTitle,
+        quantity: qty,
+        total_price: parseFloat(total)
+      }).select();
+
+      if (error) {
+        messageEl.textContent = "Error: " + error.message;
+        messageEl.className = "text-sm text-center text-red-400";
+      } else {
+        messageEl.textContent = "Order successful! Tickets booked.";
+        messageEl.className = "text-sm text-center text-green-400";
+        setTimeout(() => {
+          closeModal();
+        }, 1500);
+      }
+    }
+
+    function renderEvents(list) {
+      const grid = document.getElementById("eventGrid");
+      let html = "";
+      list.forEach(function(e) {
+        html += '<div class="bg-card rounded-xl overflow-hidden" onclick="tryBuyTicket(\'' + e.title + '\')">';
+        html += '<img src="' + e.img + '" class="w-full h-48 object-cover">';
+        html += '<div class="p-4">';
+        html += '<span class="text-xs bg-primary px-2 py-1 rounded">' + e.category + '</span>';
+        html += '<h3 class="font-bold text-lg mt-2">' + e.title + '</h3>';
+        html += '<p class="text-gray-400 text-sm">' + e.venue + '</p>';
+        html += '<p class="text-gray-500 text-sm mb-2">' + e.date + '</p>';
+        html += '<div class="flex justify-between items-center">';
+        html += '<span class="text-primary font-bold">From $' + e.price + '</span>';
+        html += '<button class="bg-gray-800 text-sm px-3 py-1 rounded-full">Tickets</button>';
+        html += '</div></div></div>';
+      });
+      grid.innerHTML = html;
+    }
+
+    function filterEvents(category) {
+      if (category === "All") {
+        renderEvents(events);
+      } else {
+        renderEvents(events.filter(e => e.category === category));
+      }
+    }
+
+    function openModal(title) {
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("ticketModal").classList.remove("hidden");
+      document.getElementById("ticketModal").classList.add("flex");
+      qty = 1;
+      document.getElementById("qty").textContent = qty;
+      document.getElementById("total").textContent = "$89.50";
+      document.getElementById("checkoutMessage").textContent = "";
+    }
+
+    function closeModal() {
+      document.getElementById("ticketModal").classList.add("hidden");
+      document.getElementById("ticketModal").classList.remove("flex");
+    }
+
+    function changeQty(num) {
+      qty = Math.max(1, qty + num);
+      document.getElementById("qty").textContent = qty;
+      document.getElementById("total").textContent = "$" + (89.50 * qty).toFixed(2);
+    }
+
+    // Start
+    checkUser();
+    renderEvents(events);
+  </script>
+</body>
+  </html>
