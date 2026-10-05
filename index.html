@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ticketmaster</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -24,7 +25,16 @@
   <!-- Navbar -->
   <nav class="bg-dark border-b border-gray-800 p-4 flex justify-between items-center">
     <div class="text-2xl font-black">Ticket<span class="text-primary">master</span></div>
-    <button class="bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold">Sign In / Register</button>
+    
+    <div id="authButtons" class="flex gap-2">
+      <button onclick="showLogin()" class="bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold">Sign In</button>
+      <button onclick="showSignup()" class="bg-gray-700 text-white px-4 py-2 rounded-full text-sm font-semibold">Sign Up</button>
+    </div>
+
+    <div id="userInfo" class="hidden items-center gap-3">
+      <span id="userEmail" class="text-sm text-gray-300"></span>
+      <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold">Logout</button>
+    </div>
   </nav>
 
   <!-- Hero -->
@@ -39,23 +49,29 @@
     </div>
   </section>
 
-  <!-- Categories -->
-  <div class="p-4 flex gap-2 overflow-x-auto">
-    <button class="category-btn bg-primary text-white px-4 py-2 rounded-full text-sm whitespace-nowrap">All Events</button>
-    <button class="category-btn bg-card px-4 py-2 rounded-full text-sm whitespace-nowrap">Concerts</button>
-    <button class="category-btn bg-card px-4 py-2 rounded-full text-sm whitespace-nowrap">Sports</button>
-    <button class="category-btn bg-card px-4 py-2 rounded-full text-sm whitespace-nowrap">Comedy</button>
-    <button class="category-btn bg-card px-4 py-2 rounded-full text-sm whitespace-nowrap">Theater</button>
-    <button class="category-btn bg-card px-4 py-2 rounded-full text-sm whitespace-nowrap">Festivals</button>
-  </div>
-
   <!-- Events -->
   <div class="p-4">
     <h2 class="text-xl font-bold mb-4">Upcoming Events Near You</h2>
     <div id="eventGrid" class="grid grid-cols-1 gap-4"></div>
   </div>
 
-  <!-- Modal -->
+  <!-- Auth Modal -->
+  <div id="authModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-50">
+    <div class="bg-card rounded-2xl p-6 w-full max-w-sm relative">
+      <button onclick="closeAuthModal()" class="absolute top-3 right-3 text-2xl">&times;</button>
+      
+      <h3 id="authTitle" class="text-xl font-bold mb-4">Sign In</h3>
+      
+      <input id="email" type="email" placeholder="Email" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 mb-3 text-white">
+      <input id="password" type="password" placeholder="Password" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 mb-4 text-white">
+      
+      <button id="authActionBtn" onclick="handleAuth()" class="w-full bg-primary py-3 rounded-full font-bold mb-3">Sign In</button>
+      
+      <p id="authMessage" class="text-sm text-center text-gray-400"></p>
+    </div>
+  </div>
+
+  <!-- Ticket Modal -->
   <div id="ticketModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-50">
     <div class="bg-card rounded-2xl p-6 w-full max-w-sm relative">
       <button onclick="closeModal()" class="absolute top-3 right-3 text-2xl">&times;</button>
@@ -78,6 +94,104 @@
   </div>
 
   <script>
+    // ========== SUPABASE SETUP ==========
+    const SUPABASE_URL = "https://wiekplllkzlvvenegtrt.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_qXv3tbYXgragVsBcJXCuaA_pc7SM3mw";
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let isLoginMode = true;
+    let qty = 1;
+
+    // Check if user is already logged in
+    async function checkUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        document.getElementById("authButtons").classList.add("hidden");
+        document.getElementById("userInfo").classList.remove("hidden");
+        document.getElementById("userInfo").classList.add("flex");
+        document.getElementById("userEmail").textContent = user.email;
+      } else {
+        document.getElementById("authButtons").classList.remove("hidden");
+        document.getElementById("userInfo").classList.add("hidden");
+      }
+    }
+
+    function showLogin() {
+      isLoginMode = true;
+      document.getElementById("authTitle").textContent = "Sign In";
+      document.getElementById("authActionBtn").textContent = "Sign In";
+      document.getElementById("authMessage").textContent = "";
+      document.getElementById("authModal").classList.remove("hidden");
+      document.getElementById("authModal").classList.add("flex");
+    }
+
+    function showSignup() {
+      isLoginMode = false;
+      document.getElementById("authTitle").textContent = "Create Account";
+      document.getElementById("authActionBtn").textContent = "Sign Up";
+      document.getElementById("authMessage").textContent = "";
+      document.getElementById("authModal").classList.remove("hidden");
+      document.getElementById("authModal").classList.add("flex");
+    }
+
+    function closeAuthModal() {
+      document.getElementById("authModal").classList.add("hidden");
+      document.getElementById("authModal").classList.remove("flex");
+    }
+
+    async function handleAuth() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const message = document.getElementById("authMessage");
+
+      if (!email || !password) {
+        message.textContent = "Please fill in all fields";
+        message.className = "text-sm text-center text-red-400";
+        return;
+      }
+
+      if (isLoginMode) {
+        // Login
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+        if (error) {
+          message.textContent = error.message;
+          message.className = "text-sm text-center text-red-400";
+        } else {
+          message.textContent = "Login successful!";
+          message.className = "text-sm text-center text-green-400";
+          setTimeout(() => {
+            closeAuthModal();
+            checkUser();
+          }, 1000);
+        }
+      } else {
+        // Sign Up
+        const { data, error } = await supabase.auth.signUp({
+          email: email,
+          password: password
+        });
+
+        if (error) {
+          message.textContent = error.message;
+          message.className = "text-sm text-center text-red-400";
+        } else {
+          message.textContent = "Account created! Check your email to confirm.";
+          message.className = "text-sm text-center text-green-400";
+        }
+      }
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      checkUser();
+    }
+
+    // ========== EVENTS ==========
     const events = [
       {title:"Billie Eilish World Tour", venue:"Madison Square Garden", date:"Nov 12, 2026", price:145, category:"Concerts", img:"https://picsum.photos/id/1011/600/400"},
       {title:"NBA Finals Game 3", venue:"Crypto.com Arena", date:"Jun 8, 2026", price:320, category:"Sports", img:"https://picsum.photos/id/1016/600/400"},
@@ -88,8 +202,6 @@
       {title:"Dave Chappelle", venue:"The Theater at MSG", date:"Nov 3, 2026", price:130, category:"Comedy", img:"https://picsum.photos/id/1050/600/400"},
       {title:"Coachella Valley Music Festival", venue:"Empire Polo Club", date:"Apr 10-19, 2027", price:549, category:"Festivals", img:"https://picsum.photos/id/1060/600/400"}
     ];
-
-    let qty = 1;
 
     function renderEvents(list) {
       const grid = document.getElementById("eventGrid");
@@ -130,23 +242,8 @@
       document.getElementById("total").textContent = "$" + (89.50 * qty).toFixed(2);
     }
 
-    document.querySelectorAll(".category-btn").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        document.querySelectorAll(".category-btn").forEach(function(b) {
-          b.classList.remove("bg-primary", "text-white");
-          b.classList.add("bg-card");
-        });
-        btn.classList.add("bg-primary", "text-white");
-        btn.classList.remove("bg-card");
-        var cat = btn.textContent.trim();
-        if (cat === "All Events") {
-          renderEvents(events);
-        } else {
-          renderEvents(events.filter(function(e) { return e.category === cat; }));
-        }
-      });
-    });
-
+    // Start
+    checkUser();
     renderEvents(events);
   </script>
 </body>
