@@ -46,4 +46,341 @@
     <img src="https://picsum.photos/id/1015/1400/700" class="w-full h-full object-cover opacity-50" alt="hero">
     <div class="absolute inset-0 bg-gradient-to-t from-dark via-dark/70 to-transparent"></div>
     <div class="absolute bottom-6 left-4 right-4">
-      <p class="text
+      <p class="text-primary font-semibold mb-1 text-sm">Featured Event</p>
+      <h1 class="text-2xl md:text-4xl font-black mb-2">Taylor Swift | The Eras Tour</h1>
+      <p class="text-gray-300 mb-4 text-sm">MetLife Stadium • East Rutherford, NJ • Oct 18, 2026</p>
+      <button onclick="tryBuyTicket('Taylor Swift | The Eras Tour', 155)" class="bg-primary hover:bg-blue-600 px-6 py-3 rounded-full font-bold transition">Find Tickets</button>
+    </div>
+  </section>
+
+  <!-- Search + Categories -->
+  <div class="px-4 py-4 space-y-3">
+    <input id="searchInput" oninput="handleSearch()" type="text" placeholder="Search events, artists, venues..." 
+           class="w-full bg-card border border-gray-700 rounded-xl px-4 py-3 text-white outline-none focus:border-primary">
+    
+    <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
+      <button onclick="filterEvents('All')" class="category-btn bg-primary text-white px-4 py-2 rounded-full text-sm whitespace-nowrap font-medium">All Events</button>
+      <button onclick="filterEvents('Concerts')" class="category-btn bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap font-medium">Concerts</button>
+      <button onclick="filterEvents('Sports')" class="category-btn bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap font-medium">Sports</button>
+      <button onclick="filterEvents('Comedy')" class="category-btn bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap font-medium">Comedy</button>
+      <button onclick="filterEvents('Theater')" class="category-btn bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap font-medium">Theater</button>
+      <button onclick="filterEvents('Festivals')" class="category-btn bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap font-medium">Festivals</button>
+    </div>
+  </div>
+
+  <!-- Events -->
+  <div class="p-4 pb-24">
+    <h2 class="text-xl font-bold mb-4">Upcoming Events Near You</h2>
+    <div id="eventGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div id="authModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-50">
+    <div class="bg-card rounded-2xl p-6 w-full max-w-sm relative">
+      <button onclick="closeAuthModal()" class="absolute top-3 right-3 text-2xl text-gray-400">&times;</button>
+      <h3 id="authTitle" class="text-xl font-bold mb-4">Sign In</h3>
+      <input id="email" type="email" placeholder="Email" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 mb-3 text-white outline-none focus:border-primary">
+      <input id="password" type="password" placeholder="Password (min 6 characters)" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 mb-4 text-white outline-none focus:border-primary">
+      <button id="authActionBtn" onclick="handleAuth()" class="w-full bg-primary py-3 rounded-full font-bold mb-3">Sign In</button>
+      <p id="authMessage" class="text-sm text-center"></p>
+    </div>
+  </div>
+
+  <!-- Ticket Modal -->
+  <div id="ticketModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-50">
+    <div class="bg-card rounded-2xl p-6 w-full max-w-sm relative">
+      <button onclick="closeModal()" class="absolute top-3 right-3 text-2xl text-gray-400">&times;</button>
+      <h3 id="modalTitle" class="text-xl font-bold mb-4"></h3>
+      <div class="flex justify-between mb-4">
+        <span>Standard Admission</span>
+        <span id="unitPrice" class="font-semibold">$155</span>
+      </div>
+      <div class="flex items-center gap-4 mb-4">
+        <button onclick="changeQty(-1)" class="w-8 h-8 bg-gray-700 rounded-full">−</button>
+        <span id="qty" class="text-lg font-bold">1</span>
+        <button onclick="changeQty(1)" class="w-8 h-8 bg-gray-700 rounded-full">+</button>
+      </div>
+      <div class="flex justify-between font-bold text-lg mb-6">
+        <span>Total</span>
+        <span id="total">$155.00</span>
+      </div>
+      <button onclick="checkout()" class="w-full bg-primary py-3 rounded-full font-bold">Continue to Checkout</button>
+      <p id="checkoutMessage" class="text-sm text-center mt-3 text-gray-400">You will be redirected to Stripe for secure payment</p>
+    </div>
+  </div>
+
+  <!-- My Tickets Modal -->
+  <div id="myTicketsModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-50">
+    <div class="bg-card rounded-2xl p-6 w-full max-w-md relative max-h-[80vh] overflow-y-auto">
+      <button onclick="closeMyTickets()" class="absolute top-3 right-3 text-2xl text-gray-400">&times;</button>
+      <h3 class="text-xl font-bold mb-4">My Tickets</h3>
+      <div id="ticketsList" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- Admin Modal -->
+  <div id="adminModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-50">
+    <div class="bg-card rounded-2xl p-6 w-full max-w-lg relative max-h-[80vh] overflow-y-auto">
+      <button onclick="closeAdmin()" class="absolute top-3 right-3 text-2xl text-gray-400">&times;</button>
+      <h3 class="text-xl font-bold mb-4">All Orders (Admin)</h3>
+      <div id="adminList" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://wiekplllkzlvvenegtrt.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpZWtwbGxsa3psdnZlbmVndHJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExNjY1ODEsImV4cCI6MjEwNjc0MjU4MX0.dWRif6ucKNz6-GRmEPZimNNVMhK9gEFRbzEzLG0b8UU";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Updated Payment Link
+    const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/9B69ASeyL16se3X2Ml2VG01";
+    const ADMIN_EMAIL = "kipm68321@gmail.com";
+
+    let isLoginMode = true;
+    let qty = 1;
+    let currentUser = null;
+    let currentEventTitle = "";
+    let currentPrice = 155;
+
+    const events = [
+      {title:"Taylor Swift | The Eras Tour", venue:"MetLife Stadium", date:"Oct 18, 2026", price:155, category:"Concerts", img:"https://picsum.photos/id/1015/600/400"},
+      {title:"Olivia Rodrigo: GUTS World Tour", venue:"Madison Square Garden", date:"Nov 8, 2026", price:155, category:"Concerts", img:"https://picsum.photos/id/177/600/400"},
+      {title:"Billie Eilish World Tour", venue:"Madison Square Garden", date:"Nov 12, 2026", price:155, category:"Concerts", img:"https://picsum.photos/id/1011/600/400"},
+      {title:"The Weeknd: After Hours Til Dawn", venue:"SoFi Stadium", date:"Aug 22, 2026", price:155, category:"Concerts", img:"https://picsum.photos/id/1080/600/400"},
+      {title:"Beyoncé Renaissance Tour", venue:"MetLife Stadium", date:"Sep 5, 2026", price:155, category:"Concerts", img:"https://picsum.photos/id/1084/600/400"},
+      {title:"Bad Bunny World Tour", venue:"Hard Rock Stadium", date:"Jul 18, 2026", price:155, category:"Concerts", img:"https://picsum.photos/id/109/600/400"},
+      {title:"Drake: It's All A Blur Tour", venue:"Scotiabank Arena", date:"Oct 3, 2026", price:155, category:"Concerts", img:"https://picsum.photos/id/201/600/400"},
+      {title:"Sabrina Carpenter: Short n' Sweet Tour", venue:"Madison Square Garden", date:"Dec 1, 2026", price:155, category:"Concerts", img:"https://picsum.photos/id/202/600/400"},
+      {title:"Post Malone: The F-1 Trillion Tour", venue:"SoFi Stadium", date:"Sep 20, 2026", price:155, category:"Concerts", img:"https://picsum.photos/id/203/600/400"},
+      {title:"Doja Cat: Scarlet Tour", venue:"Barclays Center", date:"Nov 15, 2026", price:155, category:"Concerts", img:"https://picsum.photos/id/204/600/400"},
+      {title:"Travis Scott: Utopia Tour", venue:"MetLife Stadium", date:"Aug 30, 2026", price:155, category:"Concerts", img:"https://picsum.photos/id/206/600/400"},
+      {title:"Coldplay Music of the Spheres", venue:"SoFi Stadium", date:"Sep 14, 2026", price:155, category:"Concerts", img:"https://picsum.photos/id/1036/600/400"},
+      {title:"Adele: Weekends With Adele", venue:"Caesars Palace", date:"Every Fri-Sat", price:155, category:"Concerts", img:"https://picsum.photos/id/145/600/400"},
+      {title:"Matt Rife: Problems Tour", venue:"Madison Square Garden", date:"Dec 12, 2026", price:155, category:"Comedy", img:"https://picsum.photos/id/1074/600/400"},
+      {title:"Kevin Hart: Reality Check", venue:"Barclays Center", date:"Oct 25, 2026", price:155, category:"Comedy", img:"https://picsum.photos/id/1018/600/400"},
+      {title:"Dave Chappelle", venue:"The Theater at MSG", date:"Nov 3, 2026", price:155, category:"Comedy", img:"https://picsum.photos/id/1050/600/400"},
+      {title:"Chris Rock: Ego Death Tour", venue:"Barclays Center", date:"Oct 30, 2026", price:155, category:"Comedy", img:"https://picsum.photos/id/164/600/400"},
+      {title:"Trevor Noah: Off The Record", venue:"Radio City Music Hall", date:"Nov 20, 2026", price:155, category:"Comedy", img:"https://picsum.photos/id/119/600/400"},
+      {title:"NBA Finals Game 3", venue:"Crypto.com Arena", date:"Jun 8, 2026", price:155, category:"Sports", img:"https://picsum.photos/id/1016/600/400"},
+      {title:"UFC 312", venue:"T-Mobile Arena", date:"Dec 5, 2026", price:155, category:"Sports", img:"https://picsum.photos/id/1040/600/400"},
+      {title:"WWE SummerSlam", venue:"MetLife Stadium", date:"Aug 2, 2026", price:155, category:"Sports", img:"https://picsum.photos/id/111/600/400"},
+      {title:"Lakers vs Celtics", venue:"Crypto.com Arena", date:"Jan 15, 2027", price:155, category:"Sports", img:"https://picsum.photos/id/133/600/400"},
+      {title:"Hamilton", venue:"Richard Rodgers Theatre", date:"Every Tue-Sun", price:155, category:"Theater", img:"https://picsum.photos/id/1025/600/400"},
+      {title:"Coachella Valley Music Festival", venue:"Empire Polo Club", date:"Apr 10-19, 2027", price:155, category:"Festivals", img:"https://picsum.photos/id/1060/600/400"}
+    ];
+
+    async function checkUser() {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      currentUser = user;
+
+      if (user) {
+        document.getElementById("authButtons").classList.add("hidden");
+        document.getElementById("userInfo").classList.remove("hidden");
+        document.getElementById("userInfo").classList.add("flex");
+
+        const adminBtn = document.getElementById("adminBtn");
+        if (user.email === ADMIN_EMAIL) {
+          adminBtn.classList.remove("hidden");
+        } else {
+          adminBtn.classList.add("hidden");
+        }
+      } else {
+        document.getElementById("authButtons").classList.remove("hidden");
+        document.getElementById("userInfo").classList.add("hidden");
+      }
+    }
+
+    function showLogin() {
+      isLoginMode = true;
+      document.getElementById("authTitle").textContent = "Sign In";
+      document.getElementById("authActionBtn").textContent = "Sign In";
+      document.getElementById("authMessage").textContent = "";
+      document.getElementById("authModal").classList.remove("hidden");
+      document.getElementById("authModal").classList.add("flex");
+    }
+
+    function showSignup() {
+      isLoginMode = false;
+      document.getElementById("authTitle").textContent = "Create Account";
+      document.getElementById("authActionBtn").textContent = "Sign Up";
+      document.getElementById("authMessage").textContent = "";
+      document.getElementById("authModal").classList.remove("hidden");
+      document.getElementById("authModal").classList.add("flex");
+    }
+
+    function closeAuthModal() {
+      document.getElementById("authModal").classList.add("hidden");
+      document.getElementById("authModal").classList.remove("flex");
+    }
+
+    async function handleAuth() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const messageEl = document.getElementById("authMessage");
+
+      if (!email || !password) {
+        messageEl.textContent = "Please fill in all fields";
+        messageEl.className = "text-sm text-center text-red-400";
+        return;
+      }
+
+      messageEl.textContent = "Please wait...";
+      messageEl.className = "text-sm text-center text-gray-400";
+
+      if (isLoginMode) {
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) {
+          messageEl.textContent = error.message;
+          messageEl.className = "text-sm text-center text-red-400";
+        } else {
+          messageEl.textContent = "Login successful!";
+          messageEl.className = "text-sm text-center text-green-400";
+          setTimeout(() => { closeAuthModal(); checkUser(); }, 800);
+        }
+      } else {
+        const { error } = await supabaseClient.auth.signUp({ email, password });
+        if (error) {
+          messageEl.textContent = error.message;
+          messageEl.className = "text-sm text-center text-red-400";
+        } else {
+          messageEl.textContent = "Account created! You can now Sign In.";
+          messageEl.className = "text-sm text-center text-green-400";
+        }
+      }
+    }
+
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      currentUser = null;
+      checkUser();
+    }
+
+    function tryBuyTicket(title, price) {
+      if (!currentUser) {
+        alert("Please Sign In first to buy tickets");
+        showLogin();
+        return;
+      }
+      currentEventTitle = title;
+      currentPrice = price;
+      openModal(title, price);
+    }
+
+    async function checkout() {
+      if (!currentUser) {
+        alert("Please Sign In first");
+        closeModal();
+        showLogin();
+        return;
+      }
+
+      const messageEl = document.getElementById("checkoutMessage");
+      messageEl.textContent = "Redirecting to secure payment...";
+      messageEl.className = "text-sm text-center text-blue-400";
+
+      const total = (currentPrice * qty).toFixed(2);
+
+      await supabaseClient.from("orders").insert({
+        user_id: currentUser.id,
+        event_title: currentEventTitle,
+        quantity: qty,
+        total_price: parseFloat(total)
+      });
+
+      setTimeout(() => {
+        window.location.href = STRIPE_PAYMENT_LINK;
+      }, 800);
+    }
+
+    async function showMyTickets() {
+      if (!currentUser) { showLogin(); return; }
+
+      document.getElementById("myTicketsModal").classList.remove("hidden");
+      document.getElementById("myTicketsModal").classList.add("flex");
+      const list = document.getElementById("ticketsList");
+      list.innerHTML = '<p class="text-gray-400 text-center">Loading...</p>';
+
+      const { data, error } = await supabaseClient
+        .from("orders")
+        .select("*")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false });
+
+      if (error || !data || data.length === 0) {
+        list.innerHTML = '<p class="text-gray-400 text-center">You have no tickets yet.</p>';
+        return;
+      }
+
+      let html = "";
+      data.forEach(order => {
+        html += `<div class="bg-gray-800 rounded-xl p-4">
+          <h4 class="font-bold">${order.event_title}</h4>
+          <div class="flex justify-between text-sm text-gray-400 mt-2">
+            <span>Qty: ${order.quantity}</span>
+            <span class="text-primary font-semibold">\[ {order.total_price}</span>
+          </div>
+        </div>`;
+      });
+      list.innerHTML = html;
+    }
+
+    function closeMyTickets() {
+      document.getElementById("myTicketsModal").classList.add("hidden");
+      document.getElementById("myTicketsModal").classList.remove("flex");
+    }
+
+    async function showAdmin() {
+      if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
+        alert("Access denied");
+        return;
+      }
+
+      document.getElementById("adminModal").classList.remove("hidden");
+      document.getElementById("adminModal").classList.add("flex");
+      const list = document.getElementById("adminList");
+      list.innerHTML = '<p class="text-gray-400 text-center">Loading all orders...</p>';
+
+      const { data, error } = await supabaseClient
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error || !data || data.length === 0) {
+        list.innerHTML = '<p class="text-gray-400 text-center">No orders found.</p>';
+        return;
+      }
+
+      let html = "";
+      data.forEach(order => {
+        html += `<div class="bg-gray-800 rounded-xl p-4">
+          <h4 class="font-bold">${order.event_title}</h4>
+          <p class="text-xs text-gray-500 mt-1">User ID: ${order.user_id.slice(0,8)}...</p>
+          <div class="flex justify-between text-sm text-gray-400 mt-2">
+            <span>Qty: ${order.quantity}</span>
+            <span class="text-primary font-semibold"> \]{order.total_price}</span>
+          </div>
+        </div>`;
+      });
+      list.innerHTML = html;
+    }
+
+    function closeAdmin() {
+      document.getElementById("adminModal").classList.add("hidden");
+      document.getElementById("adminModal").classList.remove("flex");
+    }
+
+    function renderEvents(list) {
+      const grid = document.getElementById("eventGrid");
+      if (list.length === 0) {
+        grid.innerHTML = '<p class="text-gray-400 col-span-2 text-center py-8">No events found</p>';
+        return;
+      }
+      let html = "";
+      list.forEach(e => {
+        html += `<div class="bg-card rounded-xl overflow-hidden shadow-lg hover:scale-[1.02] transition cursor-pointer" onclick="tryBuyTicket('${e.title}', ${e.price})">
+          <img src="${e.img}" class="w-full h-44 object-cover">
+          <div class="p-4">
+            <span class="text-xs bg-primary px-2 py-1 rounded font-medium">${e.category}</span>
+            <h3 class="font-bold text-lg mt-2 leading-tight">${e.title}</h3>
+            <p class="text-gray-400 text-sm mt-1">${e.venue}</p>
+            <p class="text-gray-
