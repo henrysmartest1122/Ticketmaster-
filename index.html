@@ -12,58 +12,66 @@
         extend: {
           colors: {
             primary: '#026CDF',
-            dark: '#121212',
+            dark: '#0f0f0f',
             card: '#1a1a1a'
           }
         }
       }
     }
   </script>
+  <style>
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+  </style>
 </head>
 <body class="bg-dark text-white min-h-screen">
 
   <!-- Navbar -->
-  <nav class="bg-dark border-b border-gray-800 p-4 flex justify-between items-center sticky top-0 z-40">
-    <div class="text-2xl font-black">Ticket<span class="text-primary">master</span></div>
+  <nav class="bg-dark/95 backdrop-blur border-b border-gray-800 p-4 flex justify-between items-center sticky top-0 z-40">
+    <div class="text-2xl font-black tracking-tight">Ticket<span class="text-primary">master</span></div>
     
     <div id="authButtons" class="flex gap-2">
-      <button onclick="showLogin()" class="bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold">Sign In</button>
-      <button onclick="showSignup()" class="bg-gray-700 text-white px-4 py-2 rounded-full text-sm font-semibold">Sign Up</button>
+      <button onclick="showLogin()" class="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition">Sign In</button>
+      <button onclick="showSignup()" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition">Sign Up</button>
     </div>
 
     <div id="userInfo" class="hidden items-center gap-2">
-      <button onclick="showMyTickets()" class="bg-gray-700 text-white px-3 py-2 rounded-full text-sm font-semibold">My Tickets</button>
-      <span id="userEmail" class="text-sm text-gray-300 max-w-[100px] truncate hidden sm:inline"></span>
-      <button onclick="logout()" class="bg-red-600 text-white px-3 py-2 rounded-full text-sm font-semibold">Logout</button>
+      <button onclick="showMyTickets()" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded-full text-sm font-semibold transition">My Tickets</button>
+      <button onclick="showAdmin()" class="bg-purple-700 hover:bg-purple-600 text-white px-3 py-2 rounded-full text-sm font-semibold transition">Admin</button>
+      <button onclick="logout()" class="bg-red-600 hover:bg-red-500 text-white px-3 py-2 rounded-full text-sm font-semibold transition">Logout</button>
     </div>
   </nav>
 
   <!-- Hero -->
-  <section class="relative h-80">
-    <img src="https://picsum.photos/id/1015/1200/600" class="w-full h-full object-cover opacity-60" alt="hero">
-    <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
+  <section class="relative h-72 md:h-96">
+    <img src="https://picsum.photos/id/1015/1400/700" class="w-full h-full object-cover opacity-50" alt="hero">
+    <div class="absolute inset-0 bg-gradient-to-t from-dark via-dark/70 to-transparent"></div>
     <div class="absolute bottom-6 left-4 right-4">
       <p class="text-primary font-semibold mb-1 text-sm">Featured Event</p>
-      <h1 class="text-2xl font-black mb-2">Taylor Swift | The Eras Tour</h1>
+      <h1 class="text-2xl md:text-4xl font-black mb-2">Taylor Swift | The Eras Tour</h1>
       <p class="text-gray-300 mb-4 text-sm">MetLife Stadium • East Rutherford, NJ • Oct 18, 2026</p>
-      <button onclick="tryBuyTicket('Taylor Swift | The Eras Tour')" class="bg-primary px-6 py-3 rounded-full font-bold">Find Tickets</button>
+      <button onclick="tryBuyTicket('Taylor Swift | The Eras Tour', 249)" class="bg-primary hover:bg-blue-600 px-6 py-3 rounded-full font-bold transition">Find Tickets</button>
     </div>
   </section>
 
-  <!-- Categories -->
-  <div class="px-4 py-4 flex gap-2 overflow-x-auto">
-    <button onclick="filterEvents('All')" class="bg-primary text-white px-4 py-2 rounded-full text-sm whitespace-nowrap">All Events</button>
-    <button onclick="filterEvents('Concerts')" class="bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap">Concerts</button>
-    <button onclick="filterEvents('Sports')" class="bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap">Sports</button>
-    <button onclick="filterEvents('Comedy')" class="bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap">Comedy</button>
-    <button onclick="filterEvents('Theater')" class="bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap">Theater</button>
-    <button onclick="filterEvents('Festivals')" class="bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap">Festivals</button>
+  <!-- Search + Categories -->
+  <div class="px-4 py-4 space-y-3">
+    <input id="searchInput" oninput="handleSearch()" type="text" placeholder="Search events, artists, venues..." 
+           class="w-full bg-card border border-gray-700 rounded-xl px-4 py-3 text-white outline-none focus:border-primary">
+    
+    <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
+      <button onclick="filterEvents('All')" class="category-btn bg-primary text-white px-4 py-2 rounded-full text-sm whitespace-nowrap font-medium">All Events</button>
+      <button onclick="filterEvents('Concerts')" class="category-btn bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap font-medium">Concerts</button>
+      <button onclick="filterEvents('Sports')" class="category-btn bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap font-medium">Sports</button>
+      <button onclick="filterEvents('Comedy')" class="category-btn bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap font-medium">Comedy</button>
+      <button onclick="filterEvents('Theater')" class="category-btn bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap font-medium">Theater</button>
+      <button onclick="filterEvents('Festivals')" class="category-btn bg-card text-white px-4 py-2 rounded-full text-sm whitespace-nowrap font-medium">Festivals</button>
+    </div>
   </div>
 
   <!-- Events -->
-  <div class="p-4 pb-20">
+  <div class="p-4 pb-24">
     <h2 class="text-xl font-bold mb-4">Upcoming Events Near You</h2>
-    <div id="eventGrid" class="grid grid-cols-1 gap-4"></div>
+    <div id="eventGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
   </div>
 
   <!-- Auth Modal -->
@@ -71,8 +79,8 @@
     <div class="bg-card rounded-2xl p-6 w-full max-w-sm relative">
       <button onclick="closeAuthModal()" class="absolute top-3 right-3 text-2xl text-gray-400">&times;</button>
       <h3 id="authTitle" class="text-xl font-bold mb-4">Sign In</h3>
-      <input id="email" type="email" placeholder="Email" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 mb-3 text-white">
-      <input id="password" type="password" placeholder="Password (min 6 characters)" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 mb-4 text-white">
+      <input id="email" type="email" placeholder="Email" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 mb-3 text-white outline-none focus:border-primary">
+      <input id="password" type="password" placeholder="Password (min 6 characters)" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 mb-4 text-white outline-none focus:border-primary">
       <button id="authActionBtn" onclick="handleAuth()" class="w-full bg-primary py-3 rounded-full font-bold mb-3">Sign In</button>
       <p id="authMessage" class="text-sm text-center"></p>
     </div>
@@ -85,7 +93,7 @@
       <h3 id="modalTitle" class="text-xl font-bold mb-4"></h3>
       <div class="flex justify-between mb-4">
         <span>Standard Admission</span>
-        <span class="font-semibold">$89.50</span>
+        <span id="unitPrice" class="font-semibold">$0</span>
       </div>
       <div class="flex items-center gap-4 mb-4">
         <button onclick="changeQty(-1)" class="w-8 h-8 bg-gray-700 rounded-full">−</button>
@@ -94,7 +102,7 @@
       </div>
       <div class="flex justify-between font-bold text-lg mb-6">
         <span>Total</span>
-        <span id="total">$89.50</span>
+        <span id="total">$0</span>
       </div>
       <button onclick="checkout()" class="w-full bg-primary py-3 rounded-full font-bold">Continue to Checkout</button>
       <p id="checkoutMessage" class="text-sm text-center mt-3"></p>
@@ -106,9 +114,16 @@
     <div class="bg-card rounded-2xl p-6 w-full max-w-md relative max-h-[80vh] overflow-y-auto">
       <button onclick="closeMyTickets()" class="absolute top-3 right-3 text-2xl text-gray-400">&times;</button>
       <h3 class="text-xl font-bold mb-4">My Tickets</h3>
-      <div id="ticketsList" class="space-y-3">
-        <p class="text-gray-400 text-center">Loading...</p>
-      </div>
+      <div id="ticketsList" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- Admin Modal -->
+  <div id="adminModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-50">
+    <div class="bg-card rounded-2xl p-6 w-full max-w-lg relative max-h-[80vh] overflow-y-auto">
+      <button onclick="closeAdmin()" class="absolute top-3 right-3 text-2xl text-gray-400">&times;</button>
+      <h3 class="text-xl font-bold mb-4">All Orders (Admin)</h3>
+      <div id="adminList" class="space-y-3"></div>
     </div>
   </div>
 
@@ -121,6 +136,7 @@
     let qty = 1;
     let currentUser = null;
     let currentEventTitle = "";
+    let currentPrice = 0;
 
     const events = [
       {title:"Billie Eilish World Tour", venue:"Madison Square Garden", date:"Nov 12, 2026", price:145, category:"Concerts", img:"https://picsum.photos/id/1011/600/400"},
@@ -130,7 +146,8 @@
       {title:"Coldplay Music of the Spheres", venue:"SoFi Stadium", date:"Sep 14, 2026", price:175, category:"Concerts", img:"https://picsum.photos/id/1036/600/400"},
       {title:"UFC 312", venue:"T-Mobile Arena", date:"Dec 5, 2026", price:210, category:"Sports", img:"https://picsum.photos/id/1040/600/400"},
       {title:"Dave Chappelle", venue:"The Theater at MSG", date:"Nov 3, 2026", price:130, category:"Comedy", img:"https://picsum.photos/id/1050/600/400"},
-      {title:"Coachella Valley Music Festival", venue:"Empire Polo Club", date:"Apr 10-19, 2027", price:549, category:"Festivals", img:"https://picsum.photos/id/1060/600/400"}
+      {title:"Coachella Valley Music Festival", venue:"Empire Polo Club", date:"Apr 10-19, 2027", price:549, category:"Festivals", img:"https://picsum.photos/id/1060/600/400"},
+      {title:"Taylor Swift | The Eras Tour", venue:"MetLife Stadium", date:"Oct 18, 2026", price:249, category:"Concerts", img:"https://picsum.photos/id/1015/600/400"}
     ];
 
     async function checkUser() {
@@ -140,7 +157,6 @@
         document.getElementById("authButtons").classList.add("hidden");
         document.getElementById("userInfo").classList.remove("hidden");
         document.getElementById("userInfo").classList.add("flex");
-        document.getElementById("userEmail").textContent = user.email;
       } else {
         document.getElementById("authButtons").classList.remove("hidden");
         document.getElementById("userInfo").classList.add("hidden");
@@ -192,10 +208,7 @@
         } else {
           messageEl.textContent = "Login successful!";
           messageEl.className = "text-sm text-center text-green-400";
-          setTimeout(() => {
-            closeAuthModal();
-            checkUser();
-          }, 800);
+          setTimeout(() => { closeAuthModal(); checkUser(); }, 800);
         }
       } else {
         const { error } = await supabaseClient.auth.signUp({ email, password });
@@ -215,14 +228,15 @@
       checkUser();
     }
 
-    function tryBuyTicket(title) {
+    function tryBuyTicket(title, price) {
       if (!currentUser) {
         alert("Please Sign In first to buy tickets");
         showLogin();
         return;
       }
       currentEventTitle = title;
-      openModal(title);
+      currentPrice = price;
+      openModal(title, price);
     }
 
     async function checkout() {
@@ -237,7 +251,7 @@
       messageEl.textContent = "Processing...";
       messageEl.className = "text-sm text-center text-gray-400";
 
-      const total = (89.50 * qty).toFixed(2);
+      const total = (currentPrice * qty).toFixed(2);
 
       const { error } = await supabaseClient.from("orders").insert({
         user_id: currentUser.id,
@@ -252,23 +266,17 @@
       } else {
         messageEl.textContent = "Order successful! Tickets booked.";
         messageEl.className = "text-sm text-center text-green-400";
-        setTimeout(() => {
-          closeModal();
-        }, 1500);
+        setTimeout(() => closeModal(), 1500);
       }
     }
 
     async function showMyTickets() {
-      if (!currentUser) {
-        showLogin();
-        return;
-      }
+      if (!currentUser) { showLogin(); return; }
 
       document.getElementById("myTicketsModal").classList.remove("hidden");
       document.getElementById("myTicketsModal").classList.add("flex");
-
       const list = document.getElementById("ticketsList");
-      list.innerHTML = '<p class="text-gray-400 text-center">Loading your tickets...</p>';
+      list.innerHTML = '<p class="text-gray-400 text-center">Loading...</p>';
 
       const { data, error } = await supabaseClient
         .from("orders")
@@ -276,27 +284,20 @@
         .eq("user_id", currentUser.id)
         .order("created_at", { ascending: false });
 
-      if (error) {
-        list.innerHTML = '<p class="text-red-400 text-center">Error loading tickets</p>';
-        return;
-      }
-
-      if (!data || data.length === 0) {
+      if (error || !data || data.length === 0) {
         list.innerHTML = '<p class="text-gray-400 text-center">You have no tickets yet.</p>';
         return;
       }
 
       let html = "";
       data.forEach(order => {
-        html += `
-          <div class="bg-gray-800 rounded-xl p-4">
-            <h4 class="font-bold text-lg">${order.event_title}</h4>
-            <div class="flex justify-between text-sm text-gray-400 mt-2">
-              <span>Qty: ${order.quantity}</span>
-              <span class="text-primary font-semibold">$${order.total_price}</span>
-            </div>
+        html += `<div class="bg-gray-800 rounded-xl p-4">
+          <h4 class="font-bold">${order.event_title}</h4>
+          <div class="flex justify-between text-sm text-gray-400 mt-2">
+            <span>Qty: ${order.quantity}</span>
+            <span class="text-primary font-semibold">\[ {order.total_price}</span>
           </div>
-        `;
+        </div>`;
       });
       list.innerHTML = html;
     }
@@ -306,40 +307,98 @@
       document.getElementById("myTicketsModal").classList.remove("flex");
     }
 
+    async function showAdmin() {
+      if (!currentUser) { showLogin(); return; }
+
+      document.getElementById("adminModal").classList.remove("hidden");
+      document.getElementById("adminModal").classList.add("flex");
+      const list = document.getElementById("adminList");
+      list.innerHTML = '<p class="text-gray-400 text-center">Loading all orders...</p>';
+
+      const { data, error } = await supabaseClient
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error || !data || data.length === 0) {
+        list.innerHTML = '<p class="text-gray-400 text-center">No orders found.</p>';
+        return;
+      }
+
+      let html = "";
+      data.forEach(order => {
+        html += `<div class="bg-gray-800 rounded-xl p-4">
+          <h4 class="font-bold">${order.event_title}</h4>
+          <p class="text-xs text-gray-500 mt-1">User: ${order.user_id.slice(0,8)}...</p>
+          <div class="flex justify-between text-sm text-gray-400 mt-2">
+            <span>Qty: ${order.quantity}</span>
+            <span class="text-primary font-semibold"> \]{order.total_price}</span>
+          </div>
+        </div>`;
+      });
+      list.innerHTML = html;
+    }
+
+    function closeAdmin() {
+      document.getElementById("adminModal").classList.add("hidden");
+      document.getElementById("adminModal").classList.remove("flex");
+    }
+
     function renderEvents(list) {
       const grid = document.getElementById("eventGrid");
+      if (list.length === 0) {
+        grid.innerHTML = '<p class="text-gray-400 col-span-2 text-center py-8">No events found</p>';
+        return;
+      }
       let html = "";
-      list.forEach(function(e) {
-        html += '<div class="bg-card rounded-xl overflow-hidden" onclick="tryBuyTicket(\'' + e.title + '\')">';
-        html += '<img src="' + e.img + '" class="w-full h-48 object-cover">';
-        html += '<div class="p-4">';
-        html += '<span class="text-xs bg-primary px-2 py-1 rounded">' + e.category + '</span>';
-        html += '<h3 class="font-bold text-lg mt-2">' + e.title + '</h3>';
-        html += '<p class="text-gray-400 text-sm">' + e.venue + '</p>';
-        html += '<p class="text-gray-500 text-sm mb-2">' + e.date + '</p>';
-        html += '<div class="flex justify-between items-center">';
-        html += '<span class="text-primary font-bold">From $' + e.price + '</span>';
-        html += '<button class="bg-gray-800 text-sm px-3 py-1 rounded-full">Tickets</button>';
-        html += '</div></div></div>';
+      list.forEach(e => {
+        html += `<div class="bg-card rounded-xl overflow-hidden shadow-lg hover:scale-[1.02] transition cursor-pointer" onclick="tryBuyTicket('${e.title}', ${e.price})">
+          <img src="${e.img}" class="w-full h-44 object-cover">
+          <div class="p-4">
+            <span class="text-xs bg-primary px-2 py-1 rounded font-medium">${e.category}</span>
+            <h3 class="font-bold text-lg mt-2 leading-tight">${e.title}</h3>
+            <p class="text-gray-400 text-sm mt-1">${e.venue}</p>
+            <p class="text-gray-500 text-sm mb-3">${e.date}</p>
+            <div class="flex justify-between items-center">
+              <span class="text-primary font-bold">From $${e.price}</span>
+              <button class="bg-gray-800 hover:bg-primary text-sm px-3 py-1.5 rounded-full transition">Tickets</button>
+            </div>
+          </div>
+        </div>`;
       });
       grid.innerHTML = html;
     }
 
     function filterEvents(category) {
-      if (category === "All") {
-        renderEvents(events);
-      } else {
-        renderEvents(events.filter(e => e.category === category));
-      }
+      document.querySelectorAll(".category-btn").forEach(btn => {
+        btn.classList.remove("bg-primary");
+        btn.classList.add("bg-card");
+      });
+      event.target.classList.add("bg-primary");
+      event.target.classList.remove("bg-card");
+
+      if (category === "All") renderEvents(events);
+      else renderEvents(events.filter(e => e.category === category));
     }
 
-    function openModal(title) {
+    function handleSearch() {
+      const term = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = events.filter(e => 
+        e.title.toLowerCase().includes(term) || 
+        e.venue.toLowerCase().includes(term) ||
+        e.category.toLowerCase().includes(term)
+      );
+      renderEvents(filtered);
+    }
+
+    function openModal(title, price) {
       document.getElementById("modalTitle").textContent = title;
+      document.getElementById("unitPrice").textContent = "$" + price;
       document.getElementById("ticketModal").classList.remove("hidden");
       document.getElementById("ticketModal").classList.add("flex");
       qty = 1;
       document.getElementById("qty").textContent = qty;
-      document.getElementById("total").textContent = "$89.50";
+      document.getElementById("total").textContent = "$" + price.toFixed(2);
       document.getElementById("checkoutMessage").textContent = "";
     }
 
@@ -351,7 +410,7 @@
     function changeQty(num) {
       qty = Math.max(1, qty + num);
       document.getElementById("qty").textContent = qty;
-      document.getElementById("total").textContent = "$" + (89.50 * qty).toFixed(2);
+      document.getElementById("total").textContent = "$" + (currentPrice * qty).toFixed(2);
     }
 
     // Start
